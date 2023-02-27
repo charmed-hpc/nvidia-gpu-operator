@@ -1,0 +1,6 @@
+options:
+  driver-package:
+    type: string
+    default: "nvidia-driver-latest-dkms"
+    description: |
+      Driver package to be installed.

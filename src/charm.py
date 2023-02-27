@@ -17,7 +17,9 @@ class NvidiaDriverOperator(CharmBase):
         """Initialize the charm."""
         super().__init__(*args)
 
-        self._nvidia_ops_manager = NvidiaOpsManager()
+        driver_package = self.config.get("driver-package")
+
+        self._nvidia_ops_manager = NvidiaOpsManager(driver_package)
 
         event_handler_bindings = {
             self.on.install: self._on_install,

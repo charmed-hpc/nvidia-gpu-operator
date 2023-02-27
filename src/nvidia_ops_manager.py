@@ -18,7 +18,7 @@ class NvidiaDriverOpsError(Exception):
 class NvidiaOpsManager:
     """NvidiaOpsManager."""
 
-    def __init__(self):
+    def __init__(self, driver_package):
         """Initialize class level variables."""
         self.PACKAGE_DEPS = [
             "tar",
@@ -39,7 +39,7 @@ class NvidiaOpsManager:
         self.EPEL_RELEASE_REPO = (
             "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
         )
-        self.NVIDIA_DRIVER_PACKAGE = "nvidia-driver-latest-dkms"
+        self.NVIDIA_DRIVER_PACKAGE = driver_package
         self.NVIDIA_DRIVER_REPO_FILEPATH = Path("/etc/yum.repos.d/cuda-rhel7.repo")
 
     @property
@@ -89,7 +89,7 @@ class NvidiaOpsManager:
             req = requests.get(self._nvidia_developer_repo)
         except requests.exceptions.HTTPError:
             raise NvidiaDriverOpsError(
-                "Error getting nvidia_developer_repository from {self._nvidia_developer_repo}."
+                f"Error getting nvidia_developer_repository from {self._nvidia_developer_repo}."
             )
         self.NVIDIA_DRIVER_REPO_FILEPATH.write_text(req.text)
         # Add the devel kernel and kernel headers.
@@ -102,19 +102,19 @@ class NvidiaOpsManager:
             run(["yum", "clean", "expire-cache"])
         except CalledProcessError:
             raise NvidiaDriverOpsError("Error flushing the cache.")
-        # Install nvidia-driver-latest-dkms..
+        # Install nvidia-driver package..
         try:
             run(["yum", "install", "-y", self.NVIDIA_DRIVER_PACKAGE])
         except CalledProcessError:
-            raise NvidiaDriverOpsError("Error installing nvidia-driver-latest-dkms.")
+            raise NvidiaDriverOpsError("Error installing nvidia drivers.")
 
     def remove(self) -> None:
         """Remove nvidia drivers from the system."""
-        # Remove nvidia-driver-latest-dkms..
+        # Remove nvidia-driver package..
         try:
             run(["yum", "erase", "-y", self.NVIDIA_DRIVER_PACKAGE])
         except CalledProcessError:
-            raise NvidiaDriverOpsError("Error removing nvidia-driver-latest-dkms from the system.")
+            raise NvidiaDriverOpsError("Error removing nvidia drivers from the system.")
         # Remove the drivers repo
         if self.NVIDIA_DRIVER_REPO_FILEPATH.exists():
             self.NVIDIA_DRIVER_REPO_FILEPATH.unlink()
