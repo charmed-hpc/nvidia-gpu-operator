@@ -1,0 +1,28 @@
+name: nvidia-gpu
+
+subordinate: true
+
+summary: |
+    Nvidia driver operator, responsible for installing and removing
+    Nvidia drivers.
+
+maintainers:
+    - OmniVector Solutions <admin@omnivector.solutions>
+
+description: |
+    The Nvidia Operator Charm will install nvidia drivers
+    to the underlying operating system upon being related to a primary
+    charm via the juju-info integration.
+
+tags:
+    - hpc
+    - gpu
+    - nvidia
+
+series:
+    - centos7
+
+requires:
+  juju-info:
+    interface: juju-info
+    scope: container
