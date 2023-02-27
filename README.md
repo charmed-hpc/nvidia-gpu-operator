@@ -9,7 +9,7 @@ The Nvidia drivers are installed via the installation procedure defined in the [
 # Example Usage
 ```bash
 juju deploy slurmd --series centos7
-juju deploy nvidia-gpu
+juju deploy nvidia-gpu --channel edge
 
 juju integrate slurmd nvidia-gpu
 ```
