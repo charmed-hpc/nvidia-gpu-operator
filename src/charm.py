@@ -23,9 +23,13 @@ class NvidiaDriverOperator(CharmBase):
         super().__init__(*args)
 
         if os_release()["ID"] == "ubuntu":
-            self._nvidia_ops_manager = NvidiaOpsManagerUbuntu()
+            self._nvidia_ops_manager = NvidiaOpsManagerUbuntu(
+                self.config.get("ubuntu-driver-package")
+            )
         else:
-            self._nvidia_ops_manager = NvidiaOpsManagerCentos(self.config.get("driver-package"))
+            self._nvidia_ops_manager = NvidiaOpsManagerCentos(
+                self.config.get("centos-driver-package")
+            )
 
         event_handler_bindings = {
             self.on.install: self._on_install,
