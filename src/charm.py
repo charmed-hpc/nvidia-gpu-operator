@@ -2,7 +2,12 @@
 """Nvidia Operator Charm."""
 import logging
 
-from nvidia_ops_manager import NvidiaDriverOpsError, NvidiaOpsManager
+from nvidia_ops_manager import (
+    NvidiaDriverOpsError,
+    NvidiaOpsManagerCentos,
+    NvidiaOpsManagerUbuntu,
+    os_release,
+)
 from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus, WaitingStatus
@@ -17,9 +22,10 @@ class NvidiaDriverOperator(CharmBase):
         """Initialize the charm."""
         super().__init__(*args)
 
-        driver_package = self.config.get("driver-package")
-
-        self._nvidia_ops_manager = NvidiaOpsManager(driver_package)
+        if os_release()["ID"] == "ubuntu":
+            self._nvidia_ops_manager = NvidiaOpsManagerUbuntu()
+        else:
+            self._nvidia_ops_manager = NvidiaOpsManagerCentos(self.config.get("driver-package"))
 
         event_handler_bindings = {
             self.on.install: self._on_install,
