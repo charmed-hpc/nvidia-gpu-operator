@@ -1,6 +1,11 @@
 options:
-  driver-package:
+  centos-driver-package:
     type: string
-    default: "nvidia-driver-latest-dkms"
+    default: ""
     description: |
-      Driver package to be installed (centos only).
+      Driver package to be installed on centos7. Default is `nvidia-driver-latest-dkms`.
+  ubuntu-driver-package:
+    type: string
+    default: ""
+    description: |
+      Driver package to be installed on ubuntu. Default is `cuda-drivers`.

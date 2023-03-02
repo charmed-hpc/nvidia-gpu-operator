@@ -66,8 +66,8 @@ class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
 
     OS_RELEASE = os_release()
 
-    def __init__(self, driver_package: str = "cuda-drivers"):
-        self._driver_package = driver_package
+    def __init__(self, driver_package: str = ""):
+        self._driver_package = driver_package if driver_package else "cuda-drivers"
         self._id = self.OS_RELEASE["ID"]
         self._version_id = self.OS_RELEASE["VERSION_ID"].replace(".", "")
         self._distribution = f"{self._id}{self._version_id}"
@@ -151,9 +151,9 @@ class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
 class NvidiaOpsManagerCentos(NvidiaOpsManagerBase):
     """NvidiaOpsManager for Centos7."""
 
-    def __init__(self, driver_package):
+    def __init__(self, driver_package: str = ""):
         """Initialize class level variables."""
-        self._driver_package = driver_package
+        self._driver_package = driver_package if driver_package else "nvidia-driver-latest-dkms"
         self._nvidia_driver_repo_filepath = Path("/etc/yum.repos.d/cuda-rhel7.repo")
 
     def install(self) -> None:
