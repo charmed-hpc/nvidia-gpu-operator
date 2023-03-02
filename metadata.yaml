@@ -20,6 +20,8 @@ tags:
     - nvidia
 
 series:
+    - jammy
+    - focal
     - centos7
 
 requires:

@@ -3,4 +3,4 @@ options:
     type: string
     default: "nvidia-driver-latest-dkms"
     description: |
-      Driver package to be installed.
+      Driver package to be installed (centos only).
