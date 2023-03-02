@@ -71,7 +71,7 @@ class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
         self._distribution = f"{self._id}{self._os}"
         self._cuda_keyring_url = (
             "https://developer.download.nvidia.com/compute/cuda/"
-            f"repos/{self._distribuition}/{self._arch}/cuda-keyring_1.0-1_all.deb"
+            f"repos/{self._distribution}/{self._arch}/cuda-keyring_1.0-1_all.deb"
         )
         self._cuda_sources_list = Path(
             f"/etc/apt/sources.list.d/cuda-{self._distribution}-{self._arch}.list"
