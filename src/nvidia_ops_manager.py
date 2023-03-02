@@ -12,7 +12,7 @@ def os_release():
     """Return /etc/os-release as a dict."""
     os_release_data = Path("/etc/os-release").read_text()
     os_release_list = [item.split("=") for item in os_release_data.strip().split("\n")]
-    return {k: v for k, v in os_release_list}
+    return {k: v.strip('"') for k, v in os_release_list}
 
 
 class NvidiaDriverOpsError(Exception):
@@ -67,8 +67,8 @@ class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
 
     def __init__(self):
         self._id = self.OS_RELEASE["ID"]
-        self._os = self.OS_RELEASE["VERSION_ID"].strip(".")
-        self._distribution = f"{self._id}{self._os}"
+        self._version_id = self.OS_RELEASE["VERSION_ID"].replace(".", "")
+        self._distribution = f"{self._id}{self._version_id}"
         self._cuda_keyring_url = (
             "https://developer.download.nvidia.com/compute/cuda/"
             f"repos/{self._distribution}/{self._arch}/cuda-keyring_1.0-1_all.deb"
@@ -94,16 +94,16 @@ class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
             )
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            cuda_keyring_deb = f"{tmpdir}/cuda_keyring.deb"
+            cuda_keyring_deb = f"{tmpdir}/cuda-keyring.deb"
             Path(cuda_keyring_deb).write_bytes(r.content)
             try:
                 run(["dpkg", "-i", cuda_keyring_deb])
             except CalledProcessError:
                 raise NvidiaDriverOpsError("Error installing cuda keyring .deb.")
-        try:
-            run(["apt-get", "update"])
-        except CalledProcessError:
-            raise NvidiaDriverOpsError("Error running `apt-get update`.")
+            try:
+                run(["apt-get", "update"])
+            except CalledProcessError:
+                raise NvidiaDriverOpsError("Error running `apt-get update`.")
 
     def _install_cuda_drivers(self) -> None:
         """Install the cuda drivers."""
@@ -139,11 +139,12 @@ class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
         except CalledProcessError:
             raise NvidiaDriverOpsError("Error running `apt-cache policy cuda-drivers.")
 
+        version = ""
         for line in p.decode().strip().split("\n"):
             if "Installed" in line:
                 version = line.split("Installed: ")[1]
-            else:
-                raise NvidiaDriverOpsError("Error locating cuda-drivers package version.")
+        if not version:
+            raise NvidiaDriverOpsError("Error locating cuda-drivers package version.")
         return version
 
 
