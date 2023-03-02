@@ -10,9 +10,8 @@ maintainers:
     - OmniVector Solutions <admin@omnivector.solutions>
 
 description: |
-    The Nvidia Operator Charm will install nvidia drivers
-    to the underlying operating system upon being related to a primary
-    charm via the juju-info integration.
+    This charm will install nvidia drivers for centos7 and ubuntu
+    20.04 & 22.04 operating systems.
 
 tags:
     - hpc

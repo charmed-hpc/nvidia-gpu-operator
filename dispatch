@@ -1,5 +1,5 @@
 #!/bin/bash
-# This hook installs the centos dependencies needed to run the charm code.
+# Install the centos dependencies needed to run the charm code.
 
 set -e
 
