@@ -27,6 +27,8 @@ class NvidiaDriverOpsError(Exception):
 class NvidiaOpsManagerBase:
     """NvidiaOpsManagerBase."""
 
+    OS_RELEASE = os_release()
+
     def __init__(self):
         pass
 
@@ -63,8 +65,6 @@ class NvidiaOpsManagerBase:
 
 class NvidiaOpsManagerUbuntu(NvidiaOpsManagerBase):
     """NvidiaOpsManager for Ubuntu."""
-
-    OS_RELEASE = os_release()
 
     def __init__(self, driver_package: str):
         self._driver_package = driver_package
@@ -153,8 +153,11 @@ class NvidiaOpsManagerCentos(NvidiaOpsManagerBase):
 
     def __init__(self, driver_package: str):
         """Initialize class level variables."""
+        self._version_id = self.OS_RELEASE["VERSION_ID"][0]
         self._driver_package = driver_package
-        self._nvidia_driver_repo_filepath = Path("/etc/yum.repos.d/cuda-rhel7.repo")
+        self._nvidia_driver_repo_filepath = Path(
+            f"/etc/yum.repos.d/cuda-rhel{self._version_id}.repo"
+        )
 
     def install(self) -> None:
         """Install nvidia drivers.
@@ -186,8 +189,8 @@ class NvidiaOpsManagerCentos(NvidiaOpsManagerBase):
 
         # Grab the repo file and write it to the /etc/yum.repos.d/.
         nvidia_developer_repo = (
-            "http://developer.download.nvidia.com/compute/cuda/repos/rhel7/"
-            f"{self._arch}/cuda-rhel7.repo"
+            f"http://developer.download.nvidia.com/compute/cuda/repos/rhel{self._version_id}/"
+            f"{self._arch}/cuda-rhel{self._version_id}.repo"
         )
         try:
             req = requests.get(nvidia_developer_repo)
